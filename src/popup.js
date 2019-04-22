@@ -95,7 +95,7 @@ function setChannels(channelList, callback) {
  * Remove the selected element from the array (if present) and return the modified array
  * @param {any[]} array 
  * @param {any} element
- * returns {any[]}
+ * @returns {any[]}
  */
 function removeElementFromArray(array, element) {
     if (array === undefined ||
