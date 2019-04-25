@@ -1,18 +1,21 @@
 chrome.runtime.onMessage.addListener(
     function (request) {
         if (request.message === 'yt' && isLoggedIn()) {
-            console.log('Logged')
+            console.log('User is logged')
 
             let channelName = getChannelNameFromForm();
             isSavedChannel(channelName, (result) => {
-                if (result === true)    
+                if (result === true) {
                     executeLike()
+                }
             })
         }
     }
 );
 
 const CHANNEL_COLLECTION = 'channels'
+const TIMEOUT = 2000
+
 
 /**
  * Check if the user is logged
@@ -29,9 +32,7 @@ function isLoggedIn() {
  * @param {function(boolean)} callback 
  */
 function isSavedChannel(channelName, callback) {
-    console.log("channel name: " + channelName)
     getSavedChannels((result) => {
-        console.log(result)
         let r = result.find((value) => {
             return value.name === channelName
         })
@@ -67,7 +68,7 @@ function executeLike() {
         let likeBtn = document.querySelectorAll('#info .style-scope yt-icon-button')[0];
         likeBtn.click();
         console.log('Liked video');
-    }, 1000)
+    }, TIMEOUT)
 }
 
 /**
