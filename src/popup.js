@@ -2,12 +2,21 @@
  * Listeners
  */
 document.getElementById('add-channel').addEventListener('click', () => {
-    let name = getChannelNameFromForm();
-    let newChannel = new Channel(name)
-    saveChannel(newChannel, (c) => {
-        addChannelToTable(newChannel)
-        setInputFormEmpty();
-    });
+    let channelName = getChannelNameFromForm()
+
+    isChannelAlreadyPresent(channelName,
+        (result) => {
+            if (result === true) {
+                printError('Canale già presente')
+                return
+            } else {
+                let newChannel = new Channel(channelName)
+                saveChannel(newChannel, (c) => {
+                    addChannelToTable(newChannel)
+                    setInputFormEmpty()
+                });
+            }
+        })
 });
 
 document.getElementById('clear-channels').addEventListener('click', () => {
@@ -87,6 +96,20 @@ function setChannels(channelList, callback) {
     chrome.storage.sync.set(obj, callback)
 }
 
+/**
+ * 
+ * @param {String} channelName 
+ * @param {function(boolean)} callback 
+ */
+function isChannelAlreadyPresent(channelName, callback) {
+    getSavedChannels((channelList) => {
+        let result = channelList.find((value) => {
+            return value.name === channelName
+        })
+        callback(result !== undefined)
+    })
+}
+
 /*
  *  Utils functions
  */
@@ -137,6 +160,24 @@ function clearTable() {
     for (let i = 0; i < length - startFromPosition; i++) {
         table.deleteRow(startFromPosition);
     }
+}
+
+/**
+ * 
+ * @param {String} text to print as error
+ */
+function printError(text) {
+    let errorPrinter = getErrorPrinter()
+    errorPrinter.innerHTML = text
+    errorPrinter.style.display = 'block'
+}
+
+function hideError() {
+    getErrorPrinter().style.display = 'none'
+}
+
+function getErrorPrinter() {
+    return document.getElementById('error-print')
 }
 
 function setInputFormEmpty() {
